@@ -24,7 +24,7 @@ function StatusDot({ status }: { status: ProgressStatus }) {
   if (status === 'in_progress') {
     return <div className="w-3 h-3 rounded-full border-2 border-amber-400 bg-amber-400/20 shrink-0" />
   }
-  return <div className="w-3 h-3 rounded-full border-2 border-deep-500 bg-transparent shrink-0" />
+  return <div className="w-3 h-3 rounded-full border-2 border-navy-400 bg-transparent shrink-0" />
 }
 
 export function SyllabusTree({ courseId, onNavigate }: Props) {
@@ -58,7 +58,7 @@ export function SyllabusTree({ courseId, onNavigate }: Props) {
         <div key={subject.id}>
           <button
             onClick={() => toggleExpand(`s-${subject.id}`)}
-            className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs font-semibold text-navy-300 hover:text-cream-100 hover:bg-deep-600/30 transition-colors"
+            className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs font-semibold text-navy-600 hover:text-navy-800 hover:bg-deep-600/40 transition-colors"
           >
             <svg
               className={`w-3 h-3 transition-transform duration-200 ${expanded[`s-${subject.id}`] ? 'rotate-90' : 'rotate-0'}`}
@@ -76,7 +76,7 @@ export function SyllabusTree({ courseId, onNavigate }: Props) {
                 <div key={topic.id}>
                   <button
                     onClick={() => toggleExpand(`t-${topic.id}`)}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs text-navy-400 hover:text-cream-200 hover:bg-deep-600/20 transition-colors"
+                    className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs text-navy-500 hover:text-navy-700 hover:bg-deep-600/30 transition-colors"
                   >
                     <svg
                       className={`w-2.5 h-2.5 transition-transform duration-200 ${expanded[`t-${topic.id}`] ? 'rotate-90' : 'rotate-0'}`}

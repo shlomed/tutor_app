@@ -31,3 +31,6 @@ build/
 
 # Node (frontend handled by its own .gitignore)
 frontend/node_modules/
+
+# Shlomi's helper files
+next_prompt.txt

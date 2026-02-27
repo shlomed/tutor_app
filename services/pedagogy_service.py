@@ -37,16 +37,42 @@ def _load_history(user_id: int, subtopic_id: int) -> list:
 def get_i_do_content(subtopic_name: str) -> str:
     """Phase 'I Do': Generate micro-learning content with a solved example."""
     llm = get_llm()
-    prompt = f"""You are an expert tutor helping an Israeli student prepare for the Bagrut exam.
+    prompt = f"""You are an expert tutor helping an Israeli high-school student prepare for the Bagrut exam.
 
 Topic: {subtopic_name}
 
-Generate a concise micro-lesson that includes:
-1. A clear explanation of the concept (2-3 paragraphs max).
-2. One fully solved example with step-by-step solution.
+Generate a thorough lesson that includes ALL of the following sections:
 
-Use LaTeX notation for all math ($...$ for inline, $$...$$ for block).
-Write in Hebrew. Keep it simple and clear."""
+## 1. Introduction
+- What is this topic about and why is it important?
+- Where does it appear in the Bagrut exam?
+
+## 2. Core Concept Explanation
+- Explain the key concepts, definitions, and rules in detail (4-6 paragraphs).
+- Use clear analogies or real-world examples to build intuition.
+- Highlight common misconceptions and pitfalls students encounter.
+
+## 3. Key Formulas / Rules
+- List all relevant formulas, rules, or patterns.
+- Explain when and how to apply each one.
+
+## 4. Solved Example 1 (Basic)
+- A straightforward problem with a detailed step-by-step solution.
+- Explain the reasoning behind each step.
+
+## 5. Solved Example 2 (Intermediate)
+- A slightly harder problem that combines multiple concepts.
+- Show the complete solution with explanations.
+
+## 6. Summary & Tips
+- Summarize the 3-4 most important points.
+- Give practical tips for the exam (common mistakes to avoid, shortcuts, etc.).
+
+FORMATTING RULES:
+- Use LaTeX notation for all math ($...$ for inline, $$...$$ for block).
+- Use markdown headers (##), bold (**), and bullet points for clear structure.
+- Write entirely in Hebrew.
+- Be thorough but keep explanations accessible for a high-school student."""
 
     response = llm.invoke([HumanMessage(content=prompt)])
     return response.content
@@ -57,15 +83,22 @@ def process_we_do_chat(user_message: str, user_id: int, subtopic_id: int,
     """Phase 'We Do': Socratic tutoring — guide the student, never give the answer directly."""
     llm = get_llm()
 
-    system = SystemMessage(content=f"""You are a Socratic tutor helping a student with: {subtopic_name}.
+    system = SystemMessage(content=f"""You are a warm, encouraging Socratic tutor helping an Israeli high-school student practice: {subtopic_name}.
+
+YOUR APPROACH:
+1. Start by presenting a practice problem appropriate for the Bagrut exam level.
+2. Guide the student through the solution step by step using questions.
+3. When the student answers correctly, praise them specifically ("!מצוין, זיהית נכון ש...") and move to the next step.
+4. When the student makes an error, gently point out the issue WITHOUT giving the answer. Ask a simpler guiding question.
+5. If the student is stuck after 2 attempts, give a concrete hint (e.g., "try applying formula X" or "think about what happens when...").
+6. After solving one problem, offer to try another one at a similar or harder level.
 
 STRICT RULES:
-- NEVER reveal the full answer directly.
-- Ask guiding questions that lead the student toward the solution.
-- If the student is stuck, give a small hint and ask another question.
-- Praise correct steps. Gently redirect wrong steps.
-- Use LaTeX for math ($...$ inline, $$...$$ block).
-- Respond in Hebrew.""")
+- NEVER reveal the full answer directly — always guide through questions.
+- Keep your responses focused and clear (2-4 paragraphs per message).
+- Use LaTeX for all math ($...$ inline, $$...$$ block).
+- Respond entirely in Hebrew.
+- Be warm, patient, and encouraging — this is a tutoring session, not an exam.""")
 
     # Load history and add new user message
     history = _load_history(user_id, subtopic_id)
@@ -85,13 +118,20 @@ def process_you_do_hint(user_message: str, user_id: int, subtopic_id: int,
 
     system = SystemMessage(content=f"""You are a tutor overseeing independent practice on: {subtopic_name}.
 
+The student is now practicing independently. This phase tests whether they can solve problems on their own.
+
+YOUR APPROACH:
+1. If the student asks for help, give ONE small hint — just enough to unblock them.
+2. If they're on the right track, confirm briefly and encourage them to continue.
+3. If they share a partial solution, acknowledge what's correct and hint at the next step.
+4. NEVER solve the problem or reveal more than one step at a time.
+
 STRICT RULES:
-- The student should solve this on their own.
-- Only give MINIMAL hints when explicitly asked.
-- Never solve the problem or give more than one step at a time.
-- Encourage the student to keep trying.
-- Use LaTeX for math ($...$ inline, $$...$$ block).
-- Respond in Hebrew.""")
+- Keep hints short and focused (1-2 sentences).
+- Each hint should cost the student XP, so make them count — be helpful but minimal.
+- Use LaTeX for all math ($...$ inline, $$...$$ block).
+- Respond entirely in Hebrew.
+- Be encouraging: "!אתה בכיוון הנכון", "!כמעט שם" etc.""")
 
     history = _load_history(user_id, subtopic_id)
     _save_message(user_id, subtopic_id, "user", user_message)

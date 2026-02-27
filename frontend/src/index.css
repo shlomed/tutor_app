@@ -2,43 +2,43 @@
 @import "katex/dist/katex.min.css";
 
 @theme {
-  /* Deep darks — sidebar, element backgrounds */
-  --color-deep-900: #0A091E;
-  --color-deep-800: #0E0C26;
-  --color-deep-700: #13102E;
-  --color-deep-600: #1A1640;
-  --color-deep-500: #231E50;
+  /* Deep darks — sidebar, element backgrounds (true black) */
+  --color-deep-900: #050508;
+  --color-deep-800: #0A0A12;
+  --color-deep-700: #10101C;
+  --color-deep-600: #1C1C2E;
+  --color-deep-500: #28283E;
 
-  /* Navy — light text scale for dark backgrounds */
-  --color-navy-950: #F8F5FC;
-  --color-navy-900: #EFEAFC;
-  --color-navy-800: #E0D9F5;
-  --color-navy-700: #C9C0E8;
-  --color-navy-600: #A99DD0;
-  --color-navy-500: #8B7DB5;
-  --color-navy-400: #7166A0;
-  --color-navy-300: #574A8A;
+  /* Navy — light text scale (bright & readable on dark) */
+  --color-navy-950: #FFFFFF;
+  --color-navy-900: #F4F4F8;
+  --color-navy-800: #E2E2EC;
+  --color-navy-700: #C4C4D4;
+  --color-navy-600: #9898B0;
+  --color-navy-500: #7A7A94;
+  --color-navy-400: #5E5E78;
+  --color-navy-300: #44445C;
 
-  /* Cream — dark surface scale */
-  --color-cream-50: #16132E;
-  --color-cream-100: #110E26;
-  --color-cream-200: #1D1940;
-  --color-cream-300: #2A2558;
-  --color-cream-400: #38326B;
+  /* Cream — surface scale (dark, clearly distinct from black bg) */
+  --color-cream-50: #0F0F1A;
+  --color-cream-100: #0A0A14;
+  --color-cream-200: #161624;
+  --color-cream-300: #252538;
+  --color-cream-400: #343450;
 
-  /* Amber → Violet/Purple accents */
-  --color-amber-800: #5B21B6;
-  --color-amber-700: #6D28D9;
-  --color-amber-600: #7C3AED;
-  --color-amber-500: #8B5CF6;
-  --color-amber-400: #A78BFA;
-  --color-amber-300: #C4B5FD;
-  --color-amber-200: #DDD6FE;
-  --color-amber-100: #251E55;
-  --color-amber-50: #1C1745;
+  /* Amber → Purple accents (vivid, used sparingly) */
+  --color-amber-800: #6D28D9;
+  --color-amber-700: #7C3AED;
+  --color-amber-600: #8B5CF6;
+  --color-amber-500: #A78BFA;
+  --color-amber-400: #C4B5FD;
+  --color-amber-300: #DDD6FE;
+  --color-amber-200: #EDE9FE;
+  --color-amber-100: #18153A;
+  --color-amber-50: #121030;
 
-  --color-success: #10B981;
-  --color-error: #EF4444;
+  --color-success: #34D399;
+  --color-error: #F87171;
   --color-info: #818CF8;
 
   --font-family-heebo: 'Heebo', sans-serif;

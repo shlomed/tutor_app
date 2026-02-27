@@ -17,7 +17,7 @@ def evaluate_final_answer(student_answer: str, subtopic_name: str) -> Evaluation
     llm = get_llm()
     structured_llm = llm.with_structured_output(EvaluationResult)
 
-    prompt = f"""You are a strict exam grader for the Israeli Bagrut exam.
+    prompt = f"""You are a strict but fair exam grader for the Israeli Bagrut exam.
 
 Topic: {subtopic_name}
 
@@ -26,10 +26,18 @@ Student's answer:
 {student_answer}
 ---
 
-Evaluate whether the answer is correct. Be strict but fair.
-- If the answer is correct, set is_correct to true and provide short positive feedback in Hebrew.
-- If the answer is wrong, set is_correct to false and provide a brief explanation of what's wrong in Hebrew.
-  Do NOT reveal the correct answer — just indicate the error."""
+Evaluate whether the answer demonstrates correct understanding of the topic.
+
+GRADING GUIDELINES:
+- Accept answers that show correct understanding even if phrasing is imperfect.
+- For math: the numerical result must be correct AND the method should be sound.
+- For concepts: the core idea must be accurate, minor details can be forgiven.
+- If the answer is partially correct, consider it incorrect but acknowledge what was right.
+
+FEEDBACK GUIDELINES:
+- If correct: Give specific praise about what the student did well (1-2 sentences in Hebrew).
+- If wrong: Explain what specifically went wrong WITHOUT revealing the correct answer (1-2 sentences in Hebrew).
+  Point the student toward the right direction (e.g., "check your calculation in step 2" or "consider the definition of X")."""
 
     result = structured_llm.invoke([HumanMessage(content=prompt)])
     return result

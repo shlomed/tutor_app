@@ -85,6 +85,20 @@ npm run dev
 
 Open http://localhost:5173 in your browser.
 
+### Stopping the servers
+
+Kill both servers when you want to restart or free the ports:
+
+```bash
+# Kill backend (port 8000)
+lsof -ti:8000 | xargs kill
+
+# Kill frontend (port 5173)
+lsof -ti:5173 | xargs kill
+```
+
+Or simply press `Ctrl+C` in each terminal where the servers are running.
+
 ## Testing
 
 **Backend tests (86 tests):**

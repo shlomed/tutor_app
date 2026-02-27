@@ -63,8 +63,8 @@ export function LobbyPage() {
             onClick={() => navigate('/syllabus/new')}
             className="group flex items-center gap-3 px-6 py-4 rounded-xl border-2 border-dashed border-cream-400 hover:border-amber-400 bg-cream-50/50 hover:bg-amber-50/50 transition-all duration-300 w-full md:w-auto"
           >
-            <div className="w-10 h-10 rounded-lg bg-amber-100 group-hover:bg-amber-200 flex items-center justify-center transition-colors">
-              <svg className="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <div className="w-10 h-10 rounded-lg bg-amber-600/15 group-hover:bg-amber-600/25 flex items-center justify-center transition-colors">
+              <svg className="w-5 h-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
               </svg>
             </div>

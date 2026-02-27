@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { useCourseStore } from '../../stores/courseStore'
 import { useChat } from '../../hooks/useChat'
 import * as learningApi from '../../api/learning'
@@ -7,11 +8,20 @@ import { UI } from '../../utils/constants'
 
 export function PhaseWeDo() {
   const { currentSubtopicId, currentSubtopicName, setLearningPhase } = useCourseStore()
-  const { messages, sendMessage, isLoading } = useChat(
+  const { messages, sendMessage, startConversation, isLoading } = useChat(
     'we-do',
     currentSubtopicId!,
     currentSubtopicName!
   )
+  const hasStarted = useRef(false)
+
+  // Auto-start the conversation so the LLM presents a problem first
+  useEffect(() => {
+    if (!hasStarted.current && messages.length === 0) {
+      hasStarted.current = true
+      startConversation()
+    }
+  }, [messages.length, startConversation])
 
   const handleNext = async () => {
     if (currentSubtopicId) {
@@ -25,7 +35,7 @@ export function PhaseWeDo() {
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-deep-700 to-deep-800 flex items-center justify-center text-lg shadow-md">
+          <div className="w-10 h-10 rounded-xl bg-amber-600/15 flex items-center justify-center text-lg">
             🤝
           </div>
           <div>
@@ -35,6 +45,17 @@ export function PhaseWeDo() {
             <p className="text-xs text-navy-400">{UI.weDoCaption}</p>
           </div>
         </div>
+
+        {/* Back to explanation */}
+        <button
+          onClick={() => setLearningPhase(1)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-navy-500 hover:text-navy-800 hover:bg-cream-200 transition-colors"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+          {UI.backToExplanation}
+        </button>
       </div>
 
       {/* Chat area */}
@@ -46,7 +67,7 @@ export function PhaseWeDo() {
       {/* Next button */}
       <button
         onClick={handleNext}
-        className="mt-4 w-full py-3.5 rounded-xl font-bold text-sm text-navy-700 bg-cream-200 hover:bg-cream-300 border border-cream-400 transition-all duration-200 flex items-center justify-center gap-2"
+        className="mt-4 w-full py-3.5 rounded-xl font-bold text-sm text-navy-800 bg-cream-300 hover:bg-cream-400 border border-cream-400 transition-all duration-200 flex items-center justify-center gap-2"
       >
         {UI.weDoButton}
         <svg className="w-4 h-4 rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

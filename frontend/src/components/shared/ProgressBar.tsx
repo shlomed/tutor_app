@@ -16,7 +16,7 @@ export function ProgressBar({ value, max, showLabel = true, className = '' }: Pr
           <span className="text-amber-600 font-bold">{pct}%</span>
         </div>
       )}
-      <div className="w-full h-2 bg-cream-300 rounded-full overflow-hidden">
+      <div className="w-full h-2 bg-deep-600 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700 ease-out"
           style={{

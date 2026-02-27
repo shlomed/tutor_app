@@ -27,7 +27,23 @@ export function useChat(
     [phase, subtopicId, subtopicName]
   );
 
+  const startConversation = useCallback(
+    async () => {
+      setIsLoading(true);
+      try {
+        const sender = phase === 'we-do' ? learningApi.sendWeDoMessage : learningApi.sendYouDoMessage;
+        const response = await sender('בואו נתחיל!', subtopicId, subtopicName);
+        setMessages([{ role: 'assistant', content: response }]);
+      } catch {
+        // silently fail
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [phase, subtopicId, subtopicName]
+  );
+
   const clearMessages = useCallback(() => setMessages([]), []);
 
-  return { messages, sendMessage, isLoading, clearMessages };
+  return { messages, sendMessage, startConversation, isLoading, clearMessages };
 }

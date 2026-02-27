@@ -17,7 +17,7 @@ test.describe('Navigation', () => {
 
   test('sidebar logout button works', async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('button', { name: 'התנתקות' }).click()
+    await page.getByRole('button', { name: 'התנתקות' }).first().click()
     await expect(page).toHaveURL('/auth', { timeout: 5000 })
   })
 

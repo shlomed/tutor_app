@@ -59,6 +59,7 @@ export const UI = {
   passwordMinLength: 'הסיסמה חייבת להכיל לפחות 8 תווים',
   sendMessage: 'שלח הודעה',
   typeMessage: 'הקלד הודעה...',
+  backToExplanation: 'חזרה להסבר',
 } as const;
 
 export function previewXp(hintsUsed: number): number {
