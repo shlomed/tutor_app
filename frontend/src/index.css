@@ -1,0 +1,206 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+@theme {
+  /* Deep darks — sidebar, element backgrounds */
+  --color-deep-900: #0A091E;
+  --color-deep-800: #0E0C26;
+  --color-deep-700: #13102E;
+  --color-deep-600: #1A1640;
+  --color-deep-500: #231E50;
+
+  /* Navy — light text scale for dark backgrounds */
+  --color-navy-950: #F8F5FC;
+  --color-navy-900: #EFEAFC;
+  --color-navy-800: #E0D9F5;
+  --color-navy-700: #C9C0E8;
+  --color-navy-600: #A99DD0;
+  --color-navy-500: #8B7DB5;
+  --color-navy-400: #7166A0;
+  --color-navy-300: #574A8A;
+
+  /* Cream — dark surface scale */
+  --color-cream-50: #16132E;
+  --color-cream-100: #110E26;
+  --color-cream-200: #1D1940;
+  --color-cream-300: #2A2558;
+  --color-cream-400: #38326B;
+
+  /* Amber → Violet/Purple accents */
+  --color-amber-800: #5B21B6;
+  --color-amber-700: #6D28D9;
+  --color-amber-600: #7C3AED;
+  --color-amber-500: #8B5CF6;
+  --color-amber-400: #A78BFA;
+  --color-amber-300: #C4B5FD;
+  --color-amber-200: #DDD6FE;
+  --color-amber-100: #251E55;
+  --color-amber-50: #1C1745;
+
+  --color-success: #10B981;
+  --color-error: #EF4444;
+  --color-info: #818CF8;
+
+  --font-family-heebo: 'Heebo', sans-serif;
+
+  --animate-fade-in: fade-in 0.5s ease-out both;
+  --animate-fade-in-up: fade-in-up 0.6s ease-out both;
+  --animate-slide-right: slide-right 0.4s ease-out both;
+  --animate-spin-slow: spin 1.2s linear infinite;
+  --animate-bounce-in: bounce-in 0.5s ease-out both;
+  --animate-glow: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes bounce-in {
+  0% { opacity: 0; transform: scale(0.9); }
+  50% { transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.1); }
+  50% { box-shadow: 0 0 30px rgba(139, 92, 246, 0.2); }
+}
+
+@layer base {
+  html {
+    font-family: var(--font-family-heebo);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-cream-100);
+    color: var(--color-navy-800);
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background-color: var(--color-amber-600);
+    color: white;
+  }
+
+  input, textarea, select {
+    direction: ltr;
+    text-align: right;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-cream-400);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-navy-300);
+  }
+}
+
+@layer components {
+  .markdown-content {
+    line-height: 1.85;
+    font-size: 1.02rem;
+  }
+
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3 {
+    color: var(--color-navy-900);
+    font-weight: 700;
+    margin-top: 1.5em;
+    margin-bottom: 0.75em;
+  }
+
+  .markdown-content h1 { font-size: 1.6rem; }
+  .markdown-content h2 { font-size: 1.3rem; }
+  .markdown-content h3 { font-size: 1.1rem; }
+  .markdown-content p { margin-bottom: 1em; }
+
+  .markdown-content ul,
+  .markdown-content ol {
+    padding-right: 1.5em;
+    margin-bottom: 1em;
+  }
+
+  .markdown-content li { margin-bottom: 0.4em; }
+
+  .markdown-content code {
+    direction: ltr;
+    unicode-bidi: embed;
+    background: var(--color-cream-200);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--color-amber-300);
+  }
+
+  .markdown-content pre {
+    direction: ltr;
+    unicode-bidi: embed;
+    background: var(--color-deep-900);
+    color: var(--color-navy-700);
+    padding: 1em 1.25em;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin-bottom: 1em;
+    font-size: 0.88rem;
+    border: 1px solid var(--color-cream-300);
+  }
+
+  .markdown-content pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+  }
+
+  .markdown-content blockquote {
+    border-right: 3px solid var(--color-amber-400);
+    padding-right: 1em;
+    margin-right: 0;
+    color: var(--color-navy-600);
+    font-style: italic;
+  }
+
+  .markdown-content strong {
+    color: var(--color-navy-900);
+    font-weight: 700;
+  }
+
+  .markdown-content .katex-display {
+    direction: ltr;
+    unicode-bidi: embed;
+    text-align: center;
+    margin: 1.2em 0;
+  }
+
+  .markdown-content .katex {
+    direction: ltr;
+    unicode-bidi: embed;
+    font-size: 1.1em;
+  }
+}
