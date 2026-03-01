@@ -60,6 +60,19 @@ export const UI = {
   sendMessage: 'שלח הודעה',
   typeMessage: 'הקלד הודעה...',
   backToExplanation: 'חזרה להסבר',
+  backToWeDo: 'חזרה לתרגול מודרך',
+  confirmDeleteTitle: 'מחיקת קורס',
+  confirmDeleteMessage: 'האם אתה בטוח שברצונך למחוק את הקורס? כל הנתונים, ההתקדמות והשיחות ימחקו לצמיתות.',
+  confirmDeleteBtn: 'מחק',
+  cancelBtn: 'ביטול',
+  courseOverview: 'סקירת קורס',
+  totalXpEarned: 'סה״כ XP',
+  nextQuestion: 'שאלה הבאה',
+  finishPractice: 'סיים תרגול',
+  questionNumber: 'שאלה',
+  practiceComplete: 'סיכום תרגול',
+  questionsAnswered: 'שאלות שנענו',
+  correctAnswers: 'תשובות נכונות',
 } as const;
 
 export function previewXp(hintsUsed: number): number {

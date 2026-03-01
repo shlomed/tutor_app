@@ -6,13 +6,28 @@ import { useCourseStore } from '../../stores/courseStore'
 import { CourseCard } from './CourseCard'
 import { LoadingSpinner } from '../shared/LoadingSpinner'
 import { UI } from '../../utils/constants'
+import * as coursesApi from '../../api/courses'
 
 export function LobbyPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const { courses, loading, error } = useCourses()
-  const { selectedCourseId } = useCourseStore()
+  const { courses, loading, error, refetch } = useCourses()
+  const { selectedCourseId, clearSelectedCourse, closeSidebar } = useCourseStore()
   const { dashboard } = useProgress()
+
+  const handleDeleteCourse = async (courseId: number) => {
+    try {
+      await coursesApi.deleteCourse(courseId)
+    } catch {
+      // ignore
+    } finally {
+      if (selectedCourseId === courseId) {
+        clearSelectedCourse()
+        closeSidebar()
+      }
+      refetch()
+    }
+  }
 
   return (
     <div className="animate-fade-in">
@@ -42,6 +57,7 @@ export function LobbyPage() {
                   course={course}
                   dashboard={dashboard}
                   isSelected={selectedCourseId === course.id}
+                  onDelete={handleDeleteCourse}
                   style={{ animationDelay: `${i * 80}ms` }}
                 />
               ))}

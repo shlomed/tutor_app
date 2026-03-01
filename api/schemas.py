@@ -91,6 +91,7 @@ class EvaluateRequest(BaseModel):
     subtopic_name: str
     subtopic_id: int
     hints_used: int
+    save_progress: bool = True
 
 
 class EvaluateResponse(BaseModel):

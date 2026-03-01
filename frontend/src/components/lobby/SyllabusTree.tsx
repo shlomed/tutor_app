@@ -42,6 +42,10 @@ export function SyllabusTree({ courseId, onNavigate }: Props) {
     return detail?.status || 'not_started'
   }
 
+  const getXp = (subtopicId: number): number => {
+    return dashboard?.details?.find((d) => d.subtopic_id === subtopicId)?.xp_earned ?? 0
+  }
+
   const toggleExpand = (key: string) => {
     setExpanded((prev) => ({ ...prev, [key]: !prev[key] }))
   }
@@ -97,7 +101,10 @@ export function SyllabusTree({ courseId, onNavigate }: Props) {
                           className="w-full flex items-center gap-2 px-2 py-1.5 rounded-md text-xs text-navy-400 hover:text-amber-300 hover:bg-amber-500/10 transition-all"
                         >
                           <StatusDot status={getStatus(st.id)} />
-                          <span className="truncate">{st.name}</span>
+                          <span className="truncate flex-1">{st.name}</span>
+                          {getXp(st.id) > 0 && (
+                            <span className="shrink-0 text-[10px] font-bold text-amber-400">{getXp(st.id)} XP</span>
+                          )}
                         </button>
                       ))}
                     </div>

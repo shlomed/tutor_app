@@ -7,6 +7,7 @@ import { SyllabusInputPage } from './components/syllabus/SyllabusInputPage'
 import { SyllabusReviewPage } from './components/syllabus/SyllabusReviewPage'
 import { SyllabusEditPage } from './components/syllabus/SyllabusEditPage'
 import { LearningPage } from './components/learning/LearningPage'
+import { CoursePage } from './components/course/CoursePage'
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/syllabus/new" element={<SyllabusInputPage />} />
           <Route path="/syllabus/review" element={<SyllabusReviewPage />} />
           <Route path="/syllabus/edit/:courseId" element={<SyllabusEditPage />} />
+          <Route path="/course/:courseId" element={<CoursePage />} />
           <Route path="/learn/:subtopicId" element={<LearningPage />} />
         </Route>
       </Route>
