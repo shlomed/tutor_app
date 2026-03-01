@@ -33,6 +33,7 @@ export function CoursePage() {
   const { tree, loading: treeLoading } = useSyllabus(numericCourseId)
   const { dashboard } = useProgress(numericCourseId ?? undefined)
   const [courseName, setCourseName] = useState<string | null>(selectedCourseName)
+  const [courseDescription, setCourseDescription] = useState('')
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
@@ -46,6 +47,7 @@ export function CoursePage() {
         const found = courses.find((c) => c.id === numericCourseId)
         if (found) {
           setCourseName(found.name)
+          setCourseDescription(found.description ?? '')
           setSelectedCourse(found.id, found.name)
         } else {
           navigate('/')
@@ -110,6 +112,10 @@ export function CoursePage() {
             </div>
           )}
         </div>
+
+        {courseDescription && (
+          <p className="mt-3 text-sm text-navy-500 leading-relaxed">{courseDescription}</p>
+        )}
 
         {dashboard && (
           <div className="mt-4">

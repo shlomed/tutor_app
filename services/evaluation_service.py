@@ -4,7 +4,7 @@ from langchain_core.messages import HumanMessage
 from pydantic import BaseModel, Field
 
 from services.ai_core import get_llm
-from services.progress_service import update_progress
+from services.progress_service import accumulate_question_xp
 
 
 class EvaluationResult(BaseModel):
@@ -12,13 +12,33 @@ class EvaluationResult(BaseModel):
     feedback: str = Field(description="Short feedback in Hebrew explaining the evaluation")
 
 
-def evaluate_final_answer(student_answer: str, subtopic_name: str) -> EvaluationResult:
+def _get_course_context_for_eval(subtopic_id: int) -> str:
+    """Look up course context for the evaluation prompt."""
+    from database.db import get_connection
+    with get_connection() as conn:
+        row = conn.execute("""
+            SELECT c.name, c.description FROM Courses c
+            JOIN Subjects s ON s.course_id = c.id
+            JOIN Topics t ON t.subject_id = s.id
+            JOIN SubTopics st ON st.topic_id = t.id
+            WHERE st.id = ?""", (subtopic_id,)).fetchone()
+    if not row:
+        return ""
+    desc = (row["description"] or "").strip()
+    return f"Course: {row['name']}" + (f"\n{desc}" if desc else "")
+
+
+def evaluate_final_answer(student_answer: str, subtopic_name: str,
+                          subtopic_id: int = 0) -> EvaluationResult:
     """Use Claude as a strict grader to evaluate the student's final answer."""
     llm = get_llm()
     structured_llm = llm.with_structured_output(EvaluationResult)
 
-    prompt = f"""You are a strict but fair exam grader for the Israeli Bagrut exam.
+    course_ctx = _get_course_context_for_eval(subtopic_id) if subtopic_id else ""
+    course_block = f"\n{course_ctx}\n" if course_ctx else ""
 
+    prompt = f"""You are a strict but fair exam grader. Adapt your grading to the student's level and course context.
+{course_block}
 Topic: {subtopic_name}
 
 Student's answer:
@@ -58,13 +78,13 @@ def calculate_xp(hints_used: int) -> int:
 def evaluate_and_save(student_answer: str, subtopic_name: str,
                       user_id: int, subtopic_id: int,
                       hints_used: int) -> tuple[EvaluationResult, int]:
-    """Full evaluation pipeline: grade, calculate XP, save to DB.
+    """Full evaluation pipeline: grade, calculate XP, accumulate in DB.
     Returns (evaluation_result, xp_earned)."""
-    result = evaluate_final_answer(student_answer, subtopic_name)
+    result = evaluate_final_answer(student_answer, subtopic_name, subtopic_id)
 
     if result.is_correct:
         xp = calculate_xp(hints_used)
-        update_progress(user_id, subtopic_id, "completed", xp, hints_used)
+        accumulate_question_xp(user_id, subtopic_id, xp, hints_used)
     else:
         xp = 0
 

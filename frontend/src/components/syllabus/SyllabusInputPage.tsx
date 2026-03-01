@@ -10,6 +10,7 @@ export function SyllabusInputPage() {
   const navigate = useNavigate()
   const { setParsedSyllabus } = useCourseStore()
   const [courseName, setCourseName] = useState('')
+  const [courseDescription, setCourseDescription] = useState('')
   const [rawText, setRawText] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -22,7 +23,7 @@ export function SyllabusInputPage() {
     setLoading(true)
     try {
       // Create the course first
-      await coursesApi.createCourse(courseName.trim())
+      await coursesApi.createCourse(courseName.trim(), courseDescription.trim())
       // Parse syllabus
       const parsed = await syllabusApi.parseSyllabus(rawText)
       setParsedSyllabus(parsed, courseName.trim())
@@ -70,6 +71,17 @@ export function SyllabusInputPage() {
               required
               placeholder={UI.courseNamePlaceholder}
               className="w-full px-4 py-3 rounded-lg border-2 border-cream-300 bg-cream-100 text-navy-800 placeholder-navy-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all text-sm"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-bold text-navy-700 mb-1.5">{UI.courseDescription}</label>
+            <textarea
+              value={courseDescription}
+              onChange={(e) => setCourseDescription(e.target.value)}
+              rows={3}
+              placeholder={UI.courseDescriptionPlaceholder}
+              className="w-full px-4 py-3 rounded-lg border-2 border-cream-300 bg-cream-100 text-navy-800 placeholder-navy-300 focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all text-sm leading-relaxed resize-y"
             />
           </div>
 

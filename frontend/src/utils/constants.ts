@@ -1,6 +1,6 @@
 export const UI = {
   appName: 'מורה חכם',
-  appSubtitle: 'מערכת תרגול חכמה לבגרות',
+  appSubtitle: 'מערכת תרגול חכמה',
   login: 'כניסה',
   signup: 'הרשמה',
   username: 'שם משתמש',
@@ -73,6 +73,11 @@ export const UI = {
   practiceComplete: 'סיכום תרגול',
   questionsAnswered: 'שאלות שנענו',
   correctAnswers: 'תשובות נכונות',
+  courseDescription: 'תיאור הקורס',
+  courseDescriptionPlaceholder: 'לדוגמה: קורס כפל לתלמידי כיתה ב׳, רמה בסיסית. מותאם לתלמידים דוברי עברית.',
+  learningPreferences: 'העדפות למידה',
+  preferencesSaved: 'העדפות נשמרו בהצלחה',
+  preferencesPlaceholder: 'תאר את סגנון הלמידה שלך, שפות שאתה דובר, רמת הידע שלך וכו׳...',
 } as const;
 
 export function previewXp(hintsUsed: number): number {

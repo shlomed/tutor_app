@@ -31,12 +31,15 @@ class SyllabusSchema(BaseModel):
 
 # --- Course CRUD ---
 
-def create_course(name: str) -> int:
+def create_course(name: str, description: str = "") -> int:
     """Insert a new course and return its ID.
     Raises ValueError if the name already exists."""
     with get_connection() as conn:
         try:
-            conn.execute("INSERT INTO Courses (name) VALUES (?)", (name,))
+            conn.execute(
+                "INSERT INTO Courses (name, description) VALUES (?, ?)",
+                (name, description),
+            )
             row = conn.execute("SELECT last_insert_rowid()").fetchone()
             return row[0]
         except Exception:
@@ -47,7 +50,7 @@ def get_all_courses() -> list[dict]:
     """Return all courses as a list of dicts."""
     with get_connection() as conn:
         rows = conn.execute(
-            "SELECT id, name, created_at FROM Courses ORDER BY id"
+            "SELECT id, name, description, created_at FROM Courses ORDER BY id"
         ).fetchall()
     return [dict(row) for row in rows]
 
@@ -138,6 +141,13 @@ def update_course_name(course_id: int, new_name: str) -> None:
     with get_connection() as conn:
         conn.execute(
             "UPDATE Courses SET name = ? WHERE id = ?", (new_name, course_id)
+        )
+
+
+def update_course_description(course_id: int, description: str) -> None:
+    with get_connection() as conn:
+        conn.execute(
+            "UPDATE Courses SET description = ? WHERE id = ?", (description, course_id)
         )
 
 

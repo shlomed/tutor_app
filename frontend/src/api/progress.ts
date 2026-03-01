@@ -20,3 +20,10 @@ export async function updateProgress(
     assistance_level_used: assistanceLevelUsed,
   });
 }
+
+export async function getSubtopicProgress(
+  subtopicId: number
+): Promise<{ status: string; xp_earned: number; assistance_level_used: number }> {
+  const { data } = await client.get(`/progress/subtopic/${subtopicId}`);
+  return data;
+}

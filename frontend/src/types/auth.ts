@@ -2,6 +2,7 @@ export interface User {
   user_id: number;
   username: string;
   name: string;
+  learning_preferences: string;
 }
 
 export interface LoginRequest {
@@ -20,4 +21,5 @@ export interface TokenResponse {
   token_type: string;
   user_id: number;
   name: string;
+  learning_preferences: string;
 }

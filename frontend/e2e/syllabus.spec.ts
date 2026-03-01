@@ -35,7 +35,7 @@ test.describe('Syllabus Edit Page', () => {
     await saveBtn.click()
 
     // Should see success message
-    await expect(page.getByText('שם הקורס עודכן בהצלחה')).toBeVisible({ timeout: 5000 })
+    await expect(page.getByText('פרטי הקורס עודכנו בהצלחה')).toBeVisible({ timeout: 5000 })
 
     // Navigate to lobby and verify the course name changed
     await page.goto('/')
@@ -117,7 +117,7 @@ test.describe('Cleanup', () => {
       await nameInput.clear()
       await nameInput.fill(TEST_COURSE.originalName)
       await page.getByTestId('save-course-name-btn').click()
-      await expect(page.getByText('שם הקורס עודכן בהצלחה')).toBeVisible({ timeout: 5000 })
+      await expect(page.getByText('פרטי הקורס עודכנו בהצלחה')).toBeVisible({ timeout: 5000 })
     }
   })
 })

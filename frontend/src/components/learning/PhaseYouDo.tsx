@@ -44,6 +44,16 @@ export function PhaseYouDo() {
   const [questionResults, setQuestionResults] = useState<QuestionResult[]>([])
   const [showSummary, setShowSummary] = useState(false)
   const [savingProgress, setSavingProgress] = useState(false)
+  const [accumulatedXp, setAccumulatedXp] = useState(0)
+
+  // Load existing progress on mount
+  useEffect(() => {
+    if (currentSubtopicId) {
+      progressApi.getSubtopicProgress(currentSubtopicId).then((p) => {
+        if (p.xp_earned > 0) setAccumulatedXp(p.xp_earned)
+      }).catch(() => {})
+    }
+  }, [currentSubtopicId])
 
   // Auto-start: AI presents first question on mount
   useEffect(() => {
@@ -70,10 +80,11 @@ export function PhaseYouDo() {
         currentSubtopicName!,
         currentSubtopicId!,
         currentQuestionHints,
-        false // don't save per-question; save on finish
+        true // save XP per-question for persistence
       )
       setCurrentResult(res)
       if (res.is_correct) {
+        setAccumulatedXp((prev) => prev + res.xp_earned)
         setQuestionResults((prev) => [
           ...prev,
           {
@@ -100,11 +111,11 @@ export function PhaseYouDo() {
   }
 
   const handleFinishPractice = async () => {
-    const totalXp = questionResults.reduce((sum, r) => sum + r.xpEarned, 0)
-    if (totalXp > 0 && currentSubtopicId) {
+    if (currentSubtopicId) {
       setSavingProgress(true)
       try {
-        await progressApi.updateProgress(currentSubtopicId, 'completed', totalXp, hintsUsed)
+        // XP already saved per-question; just mark as completed
+        await progressApi.updateProgress(currentSubtopicId, 'completed')
       } catch {
         // ignore
       } finally {
@@ -128,7 +139,7 @@ export function PhaseYouDo() {
 
   // Summary screen
   if (showSummary) {
-    const totalXp = questionResults.reduce((sum, r) => sum + r.xpEarned, 0)
+    const totalXp = accumulatedXp
     const correctCount = questionResults.filter((r) => r.isCorrect).length
 
     return (
@@ -231,9 +242,9 @@ export function PhaseYouDo() {
           <div className="px-3 py-1.5 rounded-lg bg-amber-600/10 border border-amber-600/20 text-xs font-bold text-amber-400">
             {UI.expectedXp}: {previewXp(currentQuestionHints)}
           </div>
-          {questionResults.length > 0 && (
+          {accumulatedXp > 0 && (
             <div className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs font-bold text-emerald-400">
-              {UI.totalXpEarned}: {questionResults.reduce((s, r) => s + r.xpEarned, 0)}
+              {UI.totalXpEarned}: {accumulatedXp}
             </div>
           )}
           <button

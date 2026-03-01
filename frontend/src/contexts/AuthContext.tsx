@@ -9,6 +9,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, name: string, password: string) => Promise<void>;
   logout: () => void;
+  updatePreferences: (preferences: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -38,13 +39,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (username: string, password: string) => {
     const res = await authApi.login(username, password);
     localStorage.setItem('access_token', res.access_token);
-    localStorage.setItem('user', JSON.stringify({ user_id: res.user_id, username, name: res.name }));
+    localStorage.setItem('user', JSON.stringify({ user_id: res.user_id, username, name: res.name, learning_preferences: res.learning_preferences }));
     setToken(res.access_token);
-    setUser({ user_id: res.user_id, username, name: res.name });
+    setUser({ user_id: res.user_id, username, name: res.name, learning_preferences: res.learning_preferences });
   }, []);
 
   const register = useCallback(async (username: string, name: string, password: string) => {
     await authApi.register(username, name, password);
+  }, []);
+
+  const updatePreferences = useCallback(async (preferences: string) => {
+    await authApi.updatePreferences(preferences);
+    setUser((prev) => prev ? { ...prev, learning_preferences: preferences } : prev);
   }, []);
 
   const logout = useCallback(() => {
@@ -55,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, register, logout, updatePreferences }}>
       {children}
     </AuthContext.Provider>
   );

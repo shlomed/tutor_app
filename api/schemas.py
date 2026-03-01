@@ -20,22 +20,35 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
     user_id: int
     name: str
+    learning_preferences: str = ""
 
 
 class UserResponse(BaseModel):
     user_id: int
     username: str
     name: str
+    learning_preferences: str = ""
+
+
+class UpdatePreferencesRequest(BaseModel):
+    learning_preferences: str
 
 
 # --- Courses ---
 class CourseCreate(BaseModel):
     name: str
+    description: str = ""
+
+
+class CourseUpdate(BaseModel):
+    name: str
+    description: str = ""
 
 
 class CourseResponse(BaseModel):
     id: int
     name: str
+    description: str = ""
     created_at: Optional[str] = None
 
 

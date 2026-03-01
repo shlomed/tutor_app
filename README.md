@@ -1,6 +1,6 @@
 # מורה חכם (Smart Tutor)
 
-AI-powered Bagrut exam tutoring application using Claude as the teaching engine. Built with a React + TypeScript frontend and FastAPI + SQLite backend.
+AI-powered tutoring application using Claude as the teaching engine. Works for any grade level and subject — from 2nd-grade multiplication to high-school Bagrut exams. Built with a React + TypeScript frontend and FastAPI + SQLite backend.
 
 ## Architecture
 
@@ -10,7 +10,7 @@ tutor_app/
 ├── database/             # SQLite DB module (schema, migrations)
 ├── services/             # Business logic (auth, syllabus, pedagogy, evaluation, progress)
 │   └── ai_core.py        # LLM singleton (Claude via LangChain)
-├── tests/                # Pytest test suite (89 tests)
+├── tests/                # Pytest test suite (101 tests)
 ├── frontend/             # React + TypeScript + Tailwind CSS v4
 │   ├── src/              # Components, hooks, stores, API layer
 │   └── e2e/              # Playwright E2E tests (28 tests)
@@ -101,7 +101,7 @@ Or simply press `Ctrl+C` in each terminal where the servers are running.
 
 ## Testing
 
-**Backend tests (89 tests):**
+**Backend tests (101 tests):**
 ```bash
 source .venv/bin/activate
 python -m pytest tests/ -v
@@ -124,7 +124,7 @@ npx playwright test
 | GET | `/api/auth/me` | Current user info |
 | GET | `/api/courses` | List user courses |
 | POST | `/api/courses` | Create course |
-| PUT | `/api/courses/{id}` | Rename course |
+| PUT | `/api/courses/{id}` | Update course name and description |
 | DELETE | `/api/courses/{id}` | Delete course |
 | POST | `/api/syllabus/parse` | Parse syllabus text via AI |
 | POST | `/api/syllabus/save/{course_id}` | Save parsed syllabus |
@@ -139,19 +139,26 @@ npx playwright test
 | POST | `/api/learning/you-do` | Send "You Do" chat message |
 | DELETE | `/api/learning/chat/{subtopic_id}` | Clear chat history |
 | GET | `/api/progress/dashboard` | Get progress dashboard |
-| PUT | `/api/progress/{subtopic_id}` | Update progress |
+| PUT | `/api/progress` | Update progress |
+| GET | `/api/progress/subtopic/{subtopic_id}` | Get subtopic progress |
 | POST | `/api/evaluation/evaluate` | Evaluate student answer |
+| PUT | `/api/auth/preferences` | Update learning preferences |
 | GET | `/api/health` | Health check |
 
 ## Learning Flow
 
 The app uses a 3-phase pedagogical model:
 
-1. **I Do (אני מלמד)** — AI generates a lesson with explanations and solved examples. Lessons are cached in the DB per subtopic so the same content is reused on subsequent visits.
+1. **I Do (אני מלמד)** — AI generates a lesson with explanations and solved examples. Lessons are cached in the DB per subtopic; students with learning preferences get personalized (uncached) lessons.
 2. **We Do (נתרגל ביחד)** — Socratic dialogue where the AI guides through practice problems without giving answers directly.
-3. **You Do (תרגול עצמאי)** — Multi-question independent practice. The AI auto-starts with a question; the student answers, sees an inline result card, then can request the next question or finish. Progress is saved only on finish.
+3. **You Do (תרגול עצמאי)** — Multi-question independent practice. XP is saved per-question so progress survives disconnects/navigation.
 
 Students can navigate back to a previous phase at any time. XP is awarded per question based on correctness and hints used (0 hints = 100 XP, 1 = 70, 2 = 40, 3+ = 10).
+
+### Adaptive Context
+
+- **Course Description** — Each course can have a description specifying the target audience and level (e.g., "2nd grade multiplication"). This is injected into all AI prompts so the tutor adapts its language and difficulty.
+- **Student Learning Preferences** — Per-user profile with learning style notes (editable via sidebar gear icon). Auto-updated by the AI every 10 messages based on observed interaction patterns. Injected into all prompts for personalized teaching.
 
 ## Environment Variables
 

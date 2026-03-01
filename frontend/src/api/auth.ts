@@ -19,3 +19,7 @@ export async function getMe(): Promise<User> {
   const { data } = await client.get<User>('/auth/me');
   return data;
 }
+
+export async function updatePreferences(learning_preferences: string): Promise<void> {
+  await client.put('/auth/preferences', { learning_preferences });
+}

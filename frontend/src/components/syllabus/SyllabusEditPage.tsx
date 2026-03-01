@@ -18,10 +18,12 @@ export function SyllabusEditPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  // Course name state
+  // Course name + description state
   const [courseName, setCourseName] = useState('')
   const [originalCourseName, setOriginalCourseName] = useState('')
-  const [savingCourseName, setSavingCourseName] = useState(false)
+  const [courseDescription, setCourseDescription] = useState('')
+  const [originalCourseDescription, setOriginalCourseDescription] = useState('')
+  const [savingCourseInfo, setSavingCourseInfo] = useState(false)
 
   // Re-import state
   const [reimportText, setReimportText] = useState('')
@@ -47,6 +49,8 @@ export function SyllabusEditPage() {
       if (course) {
         setCourseName(course.name)
         setOriginalCourseName(course.name)
+        setCourseDescription(course.description ?? '')
+        setOriginalCourseDescription(course.description ?? '')
       }
     } catch {
       setError(UI.errorGeneric)
@@ -68,19 +72,22 @@ export function SyllabusEditPage() {
     }
   }
 
-  const handleSaveCourseName = async () => {
-    if (!courseName.trim() || courseName === originalCourseName) return
-    setSavingCourseName(true)
+  const courseInfoChanged = courseName !== originalCourseName || courseDescription !== originalCourseDescription
+
+  const handleSaveCourseInfo = async () => {
+    if (!courseName.trim() || !courseInfoChanged) return
+    setSavingCourseInfo(true)
     setError('')
     setSuccess('')
     try {
-      await coursesApi.updateCourse(cid, courseName.trim())
+      await coursesApi.updateCourse(cid, courseName.trim(), courseDescription.trim())
       setOriginalCourseName(courseName.trim())
-      setSuccess('שם הקורס עודכן בהצלחה')
+      setOriginalCourseDescription(courseDescription.trim())
+      setSuccess('פרטי הקורס עודכנו בהצלחה')
     } catch {
       setError(UI.errorGeneric)
     } finally {
-      setSavingCourseName(false)
+      setSavingCourseInfo(false)
     }
   }
 
@@ -183,25 +190,38 @@ export function SyllabusEditPage() {
 
       {tab === 'edit' ? (
         <>
-          {/* Course name editing */}
-          <div className="bg-cream-50 rounded-xl border border-cream-300 p-4 mb-6">
-            <label className="block text-sm font-semibold text-navy-700 mb-2">שם הקורס</label>
-            <div className="flex gap-3">
+          {/* Course info editing */}
+          <div className="bg-cream-50 rounded-xl border border-cream-300 p-4 mb-6 space-y-4">
+            <div>
+              <label className="block text-sm font-semibold text-navy-700 mb-2">שם הקורס</label>
               <input
                 value={courseName}
                 onChange={(e) => setCourseName(e.target.value)}
-                className="flex-1 px-3 py-2.5 rounded-lg border-2 border-cream-300 bg-cream-100 text-navy-800 text-sm font-medium focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all"
+                className="w-full px-3 py-2.5 rounded-lg border-2 border-cream-300 bg-cream-100 text-navy-800 text-sm font-medium focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all"
                 data-testid="course-name-input"
               />
-              <button
-                onClick={handleSaveCourseName}
-                disabled={savingCourseName || !courseName.trim() || courseName === originalCourseName}
-                className="px-5 py-2.5 rounded-lg font-bold text-sm text-white bg-gradient-to-l from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-                data-testid="save-course-name-btn"
-              >
-                {savingCourseName ? '...' : 'שמור שם'}
-              </button>
             </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-navy-700 mb-2">{UI.courseDescription}</label>
+              <textarea
+                value={courseDescription}
+                onChange={(e) => setCourseDescription(e.target.value)}
+                rows={3}
+                placeholder={UI.courseDescriptionPlaceholder}
+                className="w-full px-3 py-2.5 rounded-lg border-2 border-cream-300 bg-cream-100 text-navy-800 placeholder-navy-300 text-sm focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all resize-y"
+                data-testid="course-description-input"
+              />
+            </div>
+
+            <button
+              onClick={handleSaveCourseInfo}
+              disabled={savingCourseInfo || !courseName.trim() || !courseInfoChanged}
+              className="px-5 py-2.5 rounded-lg font-bold text-sm text-white bg-gradient-to-l from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              data-testid="save-course-name-btn"
+            >
+              {savingCourseInfo ? '...' : 'שמור פרטי קורס'}
+            </button>
           </div>
 
           <div className="bg-cream-50 rounded-xl border border-cream-300 overflow-hidden mb-6">

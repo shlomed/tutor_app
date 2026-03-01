@@ -38,23 +38,43 @@ def _migrate_subjects_add_course_id(conn: sqlite3.Connection) -> None:
     """)
 
 
+def _migrate_courses_add_description(conn: sqlite3.Connection) -> None:
+    """Add description column to Courses table if not present."""
+    cols = [r[1] for r in conn.execute("PRAGMA table_info(Courses)").fetchall()]
+    if "description" not in cols:
+        conn.execute(
+            "ALTER TABLE Courses ADD COLUMN description TEXT NOT NULL DEFAULT ''"
+        )
+
+
+def _migrate_users_add_preferences(conn: sqlite3.Connection) -> None:
+    """Add learning_preferences column to Users table if not present."""
+    cols = [r[1] for r in conn.execute("PRAGMA table_info(Users)").fetchall()]
+    if "learning_preferences" not in cols:
+        conn.execute(
+            "ALTER TABLE Users ADD COLUMN learning_preferences TEXT NOT NULL DEFAULT ''"
+        )
+
+
 def init_db() -> None:
     """Create all tables if they do not already exist. Safe to call on every app rerun."""
     conn = sqlite3.connect(DB_PATH)
     try:
         conn.executescript("""
             CREATE TABLE IF NOT EXISTS Users (
-                id               INTEGER PRIMARY KEY AUTOINCREMENT,
-                username         TEXT    NOT NULL UNIQUE,
-                name             TEXT    NOT NULL,
-                hashed_password  TEXT    NOT NULL,
-                created_at       TEXT    NOT NULL DEFAULT (datetime('now'))
+                id                   INTEGER PRIMARY KEY AUTOINCREMENT,
+                username             TEXT    NOT NULL UNIQUE,
+                name                 TEXT    NOT NULL,
+                hashed_password      TEXT    NOT NULL,
+                learning_preferences TEXT    NOT NULL DEFAULT '',
+                created_at           TEXT    NOT NULL DEFAULT (datetime('now'))
             );
 
             CREATE TABLE IF NOT EXISTS Courses (
-                id         INTEGER PRIMARY KEY AUTOINCREMENT,
-                name       TEXT    NOT NULL UNIQUE,
-                created_at TEXT    NOT NULL DEFAULT (datetime('now'))
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                name        TEXT    NOT NULL UNIQUE,
+                description TEXT    NOT NULL DEFAULT '',
+                created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
             );
 
             CREATE TABLE IF NOT EXISTS Subjects (
@@ -107,6 +127,12 @@ def init_db() -> None:
 
         # Migrate existing databases that don't have course_id on Subjects
         _migrate_subjects_add_course_id(conn)
+        conn.commit()
+
+        _migrate_courses_add_description(conn)
+        conn.commit()
+
+        _migrate_users_add_preferences(conn)
         conn.commit()
     finally:
         conn.close()

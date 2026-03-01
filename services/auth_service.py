@@ -23,13 +23,32 @@ def hash_password(plain_password: str) -> str:
 
 
 def get_user_by_username(username: str) -> Optional[dict]:
-    """Return full user dict (id, username, name, hashed_password) or None."""
+    """Return full user dict (id, username, name, hashed_password, learning_preferences) or None."""
     with get_connection() as conn:
         row = conn.execute(
-            "SELECT id, username, name, hashed_password FROM Users WHERE username = ?",
+            "SELECT id, username, name, hashed_password, learning_preferences FROM Users WHERE username = ?",
             (username,),
         ).fetchone()
     return dict(row) if row else None
+
+
+def get_learning_preferences(user_id: int) -> str:
+    """Return the learning_preferences text for a user, or empty string."""
+    with get_connection() as conn:
+        row = conn.execute(
+            "SELECT learning_preferences FROM Users WHERE id = ?",
+            (user_id,),
+        ).fetchone()
+    return row["learning_preferences"] if row else ""
+
+
+def update_learning_preferences(user_id: int, preferences: str) -> None:
+    """Update the learning preferences for a user."""
+    with get_connection() as conn:
+        conn.execute(
+            "UPDATE Users SET learning_preferences = ? WHERE id = ?",
+            (preferences, user_id),
+        )
 
 
 def register_user(username: str, name: str, plain_password: str) -> None:

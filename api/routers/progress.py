@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Query
 
 from api.deps import get_current_user
 from api.schemas import ProgressUpdate, MessageResponse
-from services.progress_service import get_user_dashboard, update_progress
+from services.progress_service import get_user_dashboard, update_progress, get_subtopic_progress
 
 router = APIRouter()
 
@@ -27,3 +27,9 @@ def update(req: ProgressUpdate, current_user: dict = Depends(get_current_user)):
         assistance_level_used=req.assistance_level_used,
     )
     return {"message": "ההתקדמות עודכנה"}
+
+
+@router.get("/subtopic/{subtopic_id}")
+def get_subtopic(subtopic_id: int, current_user: dict = Depends(get_current_user)):
+    result = get_subtopic_progress(current_user["user_id"], subtopic_id)
+    return result or {"status": "not_started", "xp_earned": 0, "assistance_level_used": 0}

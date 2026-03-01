@@ -2,12 +2,15 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from api.deps import create_access_token, get_current_user
-from api.schemas import RegisterRequest, TokenResponse, UserResponse, MessageResponse
+from api.schemas import (
+    RegisterRequest, TokenResponse, UserResponse,
+    UpdatePreferencesRequest, MessageResponse,
+)
 from services.auth_service import (
     register_user,
     verify_password,
     get_user_by_username,
-    hash_password,
+    update_learning_preferences,
 )
 
 router = APIRouter()
@@ -41,9 +44,25 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
         "token_type": "bearer",
         "user_id": user["id"],
         "name": user["name"],
+        "learning_preferences": user.get("learning_preferences", ""),
     }
 
 
 @router.get("/me", response_model=UserResponse)
 def me(current_user: dict = Depends(get_current_user)):
-    return current_user
+    # Fetch from DB to get current preferences (not from JWT)
+    user = get_user_by_username(current_user["username"])
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return {
+        "user_id": user["id"],
+        "username": user["username"],
+        "name": user["name"],
+        "learning_preferences": user.get("learning_preferences", ""),
+    }
+
+
+@router.put("/preferences", response_model=MessageResponse)
+def update_preferences(req: UpdatePreferencesRequest, current_user: dict = Depends(get_current_user)):
+    update_learning_preferences(current_user["user_id"], req.learning_preferences)
+    return {"message": "ההעדפות עודכנו בהצלחה"}
