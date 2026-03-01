@@ -129,15 +129,11 @@ Write entirely in Hebrew."""
 
 def get_i_do_content(subtopic_name: str, subtopic_id: int, user_id: int = 0) -> str:
     """Phase 'I Do': Return cached lesson or generate + cache a new one.
-    If user has learning preferences, generates a personalized lesson (not cached)."""
-    from services.auth_service import get_learning_preferences
-    has_prefs = bool(get_learning_preferences(user_id).strip()) if user_id else False
-
-    # Use cache only for users without preferences (generic content)
-    if not has_prefs:
-        cached = _get_cached_lesson(subtopic_id)
-        if cached:
-            return cached
+    Always checks cache first to avoid wasting tokens on repeat visits."""
+    # Always try cache first — never regenerate a lesson that already exists
+    cached = _get_cached_lesson(subtopic_id)
+    if cached:
+        return cached
 
     course_ctx = _get_course_context(subtopic_id)
     student_ctx = _student_context_block(user_id) if user_id else ""
@@ -186,9 +182,7 @@ FORMATTING RULES:
     response = llm.invoke([HumanMessage(content=prompt)])
     content = response.content
 
-    # Cache only for generic (no-preferences) lessons
-    if not has_prefs:
-        _save_lesson(subtopic_id, content)
+    _save_lesson(subtopic_id, content)
 
     return content
 
