@@ -18,7 +18,7 @@ def evaluate(req: EvaluateRequest, current_user: dict = Depends(get_current_user
             hints_used=req.hints_used,
         )
     else:
-        result = evaluate_final_answer(req.student_answer, req.subtopic_name, req.subtopic_id)
+        result = evaluate_final_answer(req.student_answer, req.subtopic_name, req.subtopic_id, current_user["user_id"])
         xp = calculate_xp(req.hints_used) if result.is_correct else 0
     return {
         "is_correct": result.is_correct,
