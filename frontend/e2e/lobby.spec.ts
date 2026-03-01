@@ -17,7 +17,7 @@ test.describe('Lobby Page', () => {
     await expect(cards.first()).toBeVisible()
   })
 
-  test('"בחר" button selects course and shows sidebar tree', async ({ page }) => {
+  test('"בחר" button navigates to course page', async ({ page }) => {
     await page.goto('/')
     // Wait for course cards
     await page.waitForSelector('button:has-text("בחר")', { timeout: 10000 })
@@ -25,8 +25,9 @@ test.describe('Lobby Page', () => {
     // Click the select button on the first course
     await page.getByRole('button', { name: 'בחר' }).first().click()
 
-    // Sidebar should now show "קורס נבחר" and the syllabus tree
-    await expect(page.getByText('קורס נבחר')).toBeVisible({ timeout: 5000 })
+    // Should navigate to the course page and show the course tree
+    await expect(page).toHaveURL(/\/course\/\d+/, { timeout: 5000 })
+    await expect(page.getByTestId('course-tree')).toBeVisible({ timeout: 10000 })
   })
 
   test('"הוספת קורס חדש" button navigates to syllabus input', async ({ page }) => {

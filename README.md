@@ -10,10 +10,10 @@ tutor_app/
 ├── database/             # SQLite DB module (schema, migrations)
 ├── services/             # Business logic (auth, syllabus, pedagogy, evaluation, progress)
 │   └── ai_core.py        # LLM singleton (Claude via LangChain)
-├── tests/                # Pytest test suite (86 tests)
+├── tests/                # Pytest test suite (89 tests)
 ├── frontend/             # React + TypeScript + Tailwind CSS v4
 │   ├── src/              # Components, hooks, stores, API layer
-│   └── e2e/              # Playwright E2E tests (27 tests)
+│   └── e2e/              # Playwright E2E tests (28 tests)
 ├── requirements.txt      # Python dependencies
 └── .env.example          # Environment variables template
 ```
@@ -22,13 +22,13 @@ tutor_app/
 
 **Backend:**
 - Python 3.13 + FastAPI
-- SQLite (7 tables: Users, Courses, Subjects, Topics, SubTopics, UserProgress, ChatSessions)
+- SQLite (8 tables: Users, Courses, Subjects, Topics, SubTopics, UserProgress, ChatSessions, LessonContent)
 - JWT authentication (python-jose + bcrypt)
 - LangChain + Anthropic Claude for AI features
 
 **Frontend:**
 - React 19 + TypeScript + Vite
-- Tailwind CSS v4 (dark purple haze theme)
+- Tailwind CSS v4 (navy + amber academic theme)
 - Zustand (state management)
 - react-markdown + KaTeX (math rendering)
 - Playwright (E2E testing)
@@ -101,13 +101,13 @@ Or simply press `Ctrl+C` in each terminal where the servers are running.
 
 ## Testing
 
-**Backend tests (86 tests):**
+**Backend tests (89 tests):**
 ```bash
 source .venv/bin/activate
 python -m pytest tests/ -v
 ```
 
-**Frontend E2E tests (27 tests):**
+**Frontend E2E tests (28 tests):**
 ```bash
 cd frontend
 npx playwright test
@@ -134,9 +134,9 @@ npx playwright test
 | PUT | `/api/syllabus/topic/{id}` | Update topic name |
 | PUT | `/api/syllabus/subtopic/{id}` | Update subtopic name |
 | POST | `/api/syllabus/reimport/{course_id}` | Re-import syllabus |
-| POST | `/api/learning/ido` | Get "I Do" lesson content |
-| POST | `/api/learning/wedo` | Send "We Do" chat message |
-| POST | `/api/learning/youdo` | Send "You Do" chat message |
+| POST | `/api/learning/i-do` | Get "I Do" lesson content (cached in DB) |
+| POST | `/api/learning/we-do` | Send "We Do" chat message |
+| POST | `/api/learning/you-do` | Send "You Do" chat message |
 | DELETE | `/api/learning/chat/{subtopic_id}` | Clear chat history |
 | GET | `/api/progress/dashboard` | Get progress dashboard |
 | PUT | `/api/progress/{subtopic_id}` | Update progress |
@@ -147,11 +147,11 @@ npx playwright test
 
 The app uses a 3-phase pedagogical model:
 
-1. **I Do (אני מלמד)** — AI teaches the concept with explanations and examples
-2. **We Do (נתרגל ביחד)** — Socratic dialogue where the AI guides without giving answers
-3. **You Do (תרגול עצמאי)** — Independent practice with optional hints, then answer evaluation
+1. **I Do (אני מלמד)** — AI generates a lesson with explanations and solved examples. Lessons are cached in the DB per subtopic so the same content is reused on subsequent visits.
+2. **We Do (נתרגל ביחד)** — Socratic dialogue where the AI guides through practice problems without giving answers directly.
+3. **You Do (תרגול עצמאי)** — Multi-question independent practice. The AI auto-starts with a question; the student answers, sees an inline result card, then can request the next question or finish. Progress is saved only on finish.
 
-XP is awarded based on correctness and number of hints used (0 hints = 100 XP, 1 = 70, 2 = 40, 3+ = 10).
+Students can navigate back to a previous phase at any time. XP is awarded per question based on correctness and hints used (0 hints = 100 XP, 1 = 70, 2 = 40, 3+ = 10).
 
 ## Environment Variables
 

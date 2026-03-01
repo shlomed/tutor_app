@@ -95,6 +95,13 @@ def init_db() -> None:
                 content     TEXT    NOT NULL,
                 created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
             );
+
+            CREATE TABLE IF NOT EXISTS LessonContent (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                subtopic_id INTEGER NOT NULL UNIQUE REFERENCES SubTopics(id),
+                content     TEXT    NOT NULL,
+                created_at  TEXT    NOT NULL DEFAULT (datetime('now'))
+            );
         """)
         conn.commit()
 

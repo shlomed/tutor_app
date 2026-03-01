@@ -124,12 +124,13 @@ export function CoursePage() {
       ) : tree.length === 0 ? (
         <div className="text-center py-12 text-navy-400 text-sm">אין תוכן בקורס זה עדיין</div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3" data-testid="course-tree">
           {tree.map((subject) => (
             <div key={subject.id} className="bg-cream-50 rounded-xl border border-cream-300 overflow-hidden">
               {/* Subject header */}
               <button
                 onClick={() => toggleExpand(`s-${subject.id}`)}
+                data-testid={`subject-${subject.id}`}
                 className="w-full flex items-center gap-3 px-4 py-3.5 text-right hover:bg-cream-100 transition-colors"
               >
                 <svg
@@ -152,6 +153,7 @@ export function CoursePage() {
                       {/* Topic row */}
                       <button
                         onClick={() => toggleExpand(`t-${topic.id}`)}
+                        data-testid={`topic-${topic.id}`}
                         className="w-full flex items-center gap-3 px-6 py-2.5 text-right hover:bg-cream-100 transition-colors bg-cream-50/50"
                       >
                         <svg
@@ -171,6 +173,7 @@ export function CoursePage() {
                             <button
                               key={st.id}
                               onClick={() => handleSubtopicClick(st.id, st.name)}
+                              data-testid={`subtopic-${st.id}`}
                               className="w-full flex items-center gap-3 px-8 py-3 text-right hover:bg-amber-500/5 hover:border-r-2 hover:border-amber-400 transition-all group"
                             >
                               <StatusDot status={getStatus(st.id)} />

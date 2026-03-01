@@ -6,7 +6,7 @@ export const TEST_USER = {
 }
 
 export const TEST_COURSE = {
-  id: 1,
-  originalName: 'כללי',
+  id: 2,
+  originalName: 'אנגלית לכיתה ז',
   newName: 'אנגלית כיתה ח',
 }

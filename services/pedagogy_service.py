@@ -34,8 +34,32 @@ def _load_history(user_id: int, subtopic_id: int) -> list:
     return messages
 
 
-def get_i_do_content(subtopic_name: str) -> str:
-    """Phase 'I Do': Generate micro-learning content with a solved example."""
+def _get_cached_lesson(subtopic_id: int) -> str | None:
+    """Return cached lesson content from DB, or None if not found."""
+    with get_connection() as conn:
+        row = conn.execute(
+            "SELECT content FROM LessonContent WHERE subtopic_id = ?",
+            (subtopic_id,),
+        ).fetchone()
+    return row["content"] if row else None
+
+
+def _save_lesson(subtopic_id: int, content: str) -> None:
+    """Persist generated lesson content to DB for future reuse."""
+    with get_connection() as conn:
+        conn.execute(
+            "INSERT OR REPLACE INTO LessonContent (subtopic_id, content) VALUES (?, ?)",
+            (subtopic_id, content),
+        )
+
+
+def get_i_do_content(subtopic_name: str, subtopic_id: int) -> str:
+    """Phase 'I Do': Return cached lesson or generate + cache a new one."""
+    # Check DB cache first
+    cached = _get_cached_lesson(subtopic_id)
+    if cached:
+        return cached
+
     llm = get_llm()
     prompt = f"""You are an expert tutor helping an Israeli high-school student prepare for the Bagrut exam.
 
@@ -75,7 +99,12 @@ FORMATTING RULES:
 - Be thorough but keep explanations accessible for a high-school student."""
 
     response = llm.invoke([HumanMessage(content=prompt)])
-    return response.content
+    content = response.content
+
+    # Cache for future use
+    _save_lesson(subtopic_id, content)
+
+    return content
 
 
 def process_we_do_chat(user_message: str, user_id: int, subtopic_id: int,

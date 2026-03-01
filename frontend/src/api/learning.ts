@@ -1,8 +1,9 @@
 import client from './client';
 
-export async function getIDoContent(subtopicName: string): Promise<string> {
+export async function getIDoContent(subtopicName: string, subtopicId: number): Promise<string> {
   const { data } = await client.post<{ content: string }>('/learning/i-do', {
     subtopic_name: subtopicName,
+    subtopic_id: subtopicId,
   });
   return data.content;
 }

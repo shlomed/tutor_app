@@ -17,14 +17,14 @@ export function PhaseIDo() {
   const [loading, setLoading] = useState(!iDoContent)
 
   useEffect(() => {
-    if (!iDoContent && currentSubtopicName) {
+    if (!iDoContent && currentSubtopicName && currentSubtopicId) {
       setLoading(true)
       learningApi
-        .getIDoContent(currentSubtopicName)
+        .getIDoContent(currentSubtopicName, currentSubtopicId)
         .then(setIDoContent)
         .finally(() => setLoading(false))
     }
-  }, [currentSubtopicName, iDoContent, setIDoContent])
+  }, [currentSubtopicId, currentSubtopicName, iDoContent, setIDoContent])
 
   const handleNext = async () => {
     if (currentSubtopicId) {

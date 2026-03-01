@@ -49,7 +49,7 @@ export const useCourseStore = create<CourseStore>((set) => ({
   learningPhase: 1,
   hintsUsed: 0,
   iDoContent: null,
-  setCurrentSubtopic: (id, name) => set({ currentSubtopicId: id, currentSubtopicName: name }),
+  setCurrentSubtopic: (id, name) => set({ currentSubtopicId: id, currentSubtopicName: name, learningPhase: 1, hintsUsed: 0, iDoContent: null }),
   setLearningPhase: (phase) => set({ learningPhase: phase }),
   setIDoContent: (content) => set({ iDoContent: content }),
   incrementHints: () => set((s) => ({ hintsUsed: s.hintsUsed + 1 })),

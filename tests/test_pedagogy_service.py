@@ -1,5 +1,8 @@
 from database.db import get_connection
-from services.pedagogy_service import _load_history, _save_message, clear_chat_history
+from services.pedagogy_service import (
+    _load_history, _save_message, clear_chat_history,
+    _get_cached_lesson, _save_lesson,
+)
 
 
 def _seed_user_and_subtopic() -> tuple[int, int]:
@@ -64,3 +67,42 @@ class TestChatPersistence:
         assert len(h2) == 1
         assert h1[0].content == "הודעה 1"
         assert h2[0].content == "הודעה 2"
+
+
+class TestLessonContentCache:
+    def test_save_and_retrieve_cached_lesson(self):
+        _, subtopic_id = _seed_user_and_subtopic()
+
+        # No cache initially
+        assert _get_cached_lesson(subtopic_id) is None
+
+        # Save a lesson
+        _save_lesson(subtopic_id, "# שיעור על משוואות\nתוכן השיעור...")
+
+        # Should return cached content
+        cached = _get_cached_lesson(subtopic_id)
+        assert cached == "# שיעור על משוואות\nתוכן השיעור..."
+
+    def test_cache_isolated_per_subtopic(self):
+        _, subtopic_id = _seed_user_and_subtopic()
+
+        # Create a second subtopic
+        with get_connection() as conn:
+            topic_id = conn.execute("SELECT id FROM Topics LIMIT 1").fetchone()["id"]
+            conn.execute("INSERT INTO SubTopics (topic_id, name) VALUES (?, ?)", (topic_id, "גיאומטריה"))
+            other_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+
+        _save_lesson(subtopic_id, "שיעור A")
+        _save_lesson(other_id, "שיעור B")
+
+        assert _get_cached_lesson(subtopic_id) == "שיעור A"
+        assert _get_cached_lesson(other_id) == "שיעור B"
+
+    def test_save_lesson_overwrites_existing(self):
+        _, subtopic_id = _seed_user_and_subtopic()
+
+        _save_lesson(subtopic_id, "גרסה 1")
+        assert _get_cached_lesson(subtopic_id) == "גרסה 1"
+
+        _save_lesson(subtopic_id, "גרסה 2")
+        assert _get_cached_lesson(subtopic_id) == "גרסה 2"

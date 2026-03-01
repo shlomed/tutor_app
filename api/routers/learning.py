@@ -14,7 +14,7 @@ router = APIRouter()
 
 @router.post("/i-do", response_model=IDoResponse)
 def i_do(req: IDoRequest, current_user: dict = Depends(get_current_user)):
-    content = get_i_do_content(req.subtopic_name)
+    content = get_i_do_content(req.subtopic_name, req.subtopic_id)
     return {"content": content}
 
 

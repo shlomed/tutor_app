@@ -61,6 +61,7 @@ class SyllabusSaveCounts(BaseModel):
 # --- Learning ---
 class IDoRequest(BaseModel):
     subtopic_name: str
+    subtopic_id: int
 
 
 class IDoResponse(BaseModel):
