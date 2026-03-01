@@ -29,7 +29,7 @@ export function PhaseYouDo() {
     setLearningPhase,
   } = useCourseStore()
 
-  const { messages, sendMessage, startConversation, isLoading: chatLoading } = useChat(
+  const { messages, sendMessage, startConversation, addMessage, isLoading: chatLoading } = useChat(
     'you-do',
     currentSubtopicId!,
     currentSubtopicName!
@@ -83,6 +83,13 @@ export function PhaseYouDo() {
         true // save XP per-question for persistence
       )
       setCurrentResult(res)
+
+      // Show answer + evaluation in chat window
+      addMessage('user', `[תשובה סופית] ${finalAnswer.trim()}`)
+      const status = res.is_correct ? '✅ נכון' : '❌ לא נכון'
+      const xpLine = res.is_correct && res.xp_earned > 0 ? `\n\n**+${res.xp_earned} XP** ⭐` : ''
+      addMessage('assistant', `**[הערכה: ${status}]** ${res.feedback}${xpLine}`)
+
       if (res.is_correct) {
         setAccumulatedXp((prev) => prev + res.xp_earned)
         setQuestionResults((prev) => [

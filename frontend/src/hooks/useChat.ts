@@ -43,7 +43,11 @@ export function useChat(
     [phase, subtopicId, subtopicName]
   );
 
+  const addMessage = useCallback((role: ChatMessage['role'], content: string) => {
+    setMessages((prev) => [...prev, { role, content }]);
+  }, []);
+
   const clearMessages = useCallback(() => setMessages([]), []);
 
-  return { messages, sendMessage, startConversation, isLoading, clearMessages };
+  return { messages, sendMessage, startConversation, isLoading, clearMessages, addMessage };
 }

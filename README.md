@@ -10,7 +10,7 @@ tutor_app/
 ├── database/             # SQLite DB module (schema, migrations)
 ├── services/             # Business logic (auth, syllabus, pedagogy, evaluation, progress)
 │   └── ai_core.py        # LLM singleton (Claude via LangChain)
-├── tests/                # Pytest test suite (101 tests)
+├── tests/                # Pytest test suite (105 tests)
 ├── frontend/             # React + TypeScript + Tailwind CSS v4
 │   ├── src/              # Components, hooks, stores, API layer
 │   └── e2e/              # Playwright E2E tests (28 tests)
@@ -101,7 +101,7 @@ Or simply press `Ctrl+C` in each terminal where the servers are running.
 
 ## Testing
 
-**Backend tests (101 tests):**
+**Backend tests (105 tests):**
 ```bash
 source .venv/bin/activate
 python -m pytest tests/ -v
@@ -151,7 +151,7 @@ The app uses a 3-phase pedagogical model:
 
 1. **I Do (אני מלמד)** — AI generates a lesson with explanations and solved examples. Lessons are cached in the DB per subtopic; students with learning preferences get personalized (uncached) lessons.
 2. **We Do (נתרגל ביחד)** — Socratic dialogue where the AI guides through practice problems without giving answers directly.
-3. **You Do (תרגול עצמאי)** — Multi-question independent practice. XP is saved per-question so progress survives disconnects/navigation.
+3. **You Do (תרגול עצמאי)** — Multi-question independent practice. XP is saved per-question so progress survives disconnects/navigation. Submitted answers and evaluation feedback (correct/incorrect, explanation, XP earned) appear directly in the chat window for full conversation continuity.
 
 Students can navigate back to a previous phase at any time. XP is awarded per question based on correctness and hints used (0 hints = 100 XP, 1 = 70, 2 = 40, 3+ = 10).
 
