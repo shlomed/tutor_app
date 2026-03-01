@@ -16,7 +16,7 @@ export function ChatBubble({ message }: Props) {
           : 'bg-cream-200 border border-cream-300 text-navy-800 rounded-bl-sm'
       }`}>
         {isUser ? (
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+          <p dir="auto" style={{ unicodeBidi: 'plaintext' }} className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
         ) : (
           <MarkdownRenderer content={message.content} />
         )}
