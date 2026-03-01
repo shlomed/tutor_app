@@ -4,6 +4,7 @@ from langchain_core.messages import HumanMessage
 from pydantic import BaseModel, Field
 
 from services.ai_core import get_llm
+from services.pedagogy_service import _save_message
 from services.progress_service import accumulate_question_xp
 
 
@@ -108,8 +109,11 @@ def calculate_xp(hints_used: int) -> int:
 def evaluate_and_save(student_answer: str, subtopic_name: str,
                       user_id: int, subtopic_id: int,
                       hints_used: int) -> tuple[EvaluationResult, int]:
-    """Full evaluation pipeline: grade, calculate XP, accumulate in DB.
+    """Full evaluation pipeline: grade, calculate XP, persist answer+feedback to chat, accumulate in DB.
     Returns (evaluation_result, xp_earned)."""
+    # Save the student's answer into chat history so the You-Do AI stays aware
+    _save_message(user_id, subtopic_id, "user", f"[תשובה סופית] {student_answer}")
+
     result = evaluate_final_answer(student_answer, subtopic_name, subtopic_id, user_id)
 
     if result.is_correct:
@@ -117,5 +121,9 @@ def evaluate_and_save(student_answer: str, subtopic_name: str,
         accumulate_question_xp(user_id, subtopic_id, xp, hints_used)
     else:
         xp = 0
+
+    # Save evaluation feedback into chat history
+    status = "✅ נכון" if result.is_correct else "❌ לא נכון"
+    _save_message(user_id, subtopic_id, "assistant", f"[הערכה: {status}] {result.feedback}")
 
     return result, xp
